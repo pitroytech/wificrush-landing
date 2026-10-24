@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="WifiCrush for jailbroken iPhone.">
+<meta name="theme-color" content="#f3f5f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e1211" media="(prefers-color-scheme: dark)">
+<title>WifiCrush</title>
+<link rel="icon" href="assets/app-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="phone.css">
+<script src="i18n.js" defer></script>
+<script src="sim.js" defer></script>
+<script src="scene.js" defer></script>
+<script src="phone.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="nav wrap">
+  <a class="brand" href="#top" data-i18n-aria="brandHome"><img src="assets/app-icon.png" width="32" height="32" alt=""><span>Wifi<b>Crush</b></span></a>
+  <nav data-i18n-aria="navLabel">
+    <a href="#stories" data-i18n="navStories"></a>
+    <a href="#rules" data-i18n="navRules"></a>
+    <div class="lang" role="group" data-i18n-aria="langLabel">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="vi" aria-pressed="false">VI</button>
+    </div>
+    <a class="nav-cta" href="#get" data-i18n="navGet"></a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <div class="hero-copy">
+      <h1 data-i18n-html="heroTitle"></h1>
+      <p class="lead" data-i18n="heroLead"></p>
+      <a class="button primary" href="#stories"><span data-i18n="heroCta"></span> <i class="ph ph-arrow-down"></i></a>
+    </div>
+    <div class="hero-visual" aria-hidden="true"><div class="device hero-device" id="hero-phone"></div></div>
+  </section>
+
+  <section class="stories wrap" id="stories" aria-labelledby="stories-title">
+    <h2 id="stories-title" data-i18n="storiesTitle"></h2>
+    <div class="story-tabs" role="tablist" id="story-tabs"></div>
+
+    <div class="stage-frame">
+    <div class="stage">
+      <div class="stage-scene">
+        <div class="stage-toolbar">
+          <span class="stage-hint" data-i18n="stageHint"></span>
+          <strong class="stage-title" id="stage-title"></strong>
+          <div class="transport">
+            <button class="icon-button phone-only" id="prev-story" data-i18n-aria="prevStory"><i class="ph ph-caret-left"></i></button>
+            <button class="icon-button" id="play"><i class="ph-fill ph-play"></i></button>
+            <button class="icon-button" id="replay" data-i18n-aria="replay"><i class="ph ph-arrow-counter-clockwise"></i></button>
+            <button class="icon-button phone-only" id="next-story" data-i18n-aria="nextStory"><i class="ph ph-caret-right"></i></button>
+          </div>
+        </div>
+        <div class="scene-box">
+          <svg id="map" viewBox="0 0 1000 440" role="img" data-i18n-aria="sceneLabel"></svg>
+          <div class="scene-fx" id="scene-fx" aria-hidden="true"></div>
+        </div>
+        <div class="explain" id="explain" aria-live="polite"></div>
+      </div>
+      <div class="duo">
+        <figure class="duo-col">
+          <figcaption><span class="duo-label" data-i18n="withoutTweak"></span><span class="speed" id="speed-ios"><i class="ph ph-arrow-down"></i><b>0</b> Mb/s</span></figcaption>
+          <div class="phone-wrap"><div class="notes" id="notes-ios" aria-hidden="true"></div><div class="device duo-device" id="phone-ios"></div></div>
+          <p class="duo-caption" id="caption-ios" aria-live="polite"></p>
+        </figure>
+        <figure class="duo-col tweak">
+          <figcaption><span class="duo-label" data-i18n="withTweak"></span><span class="speed" id="speed-tweak"><i class="ph ph-arrow-down"></i><b>0</b> Mb/s</span></figcaption>
+          <div class="phone-wrap"><div class="notes" id="notes-tweak" aria-hidden="true"></div><div class="device duo-device" id="phone-tweak"></div></div>
+          <p class="duo-caption" id="caption-tweak" aria-live="polite"></p>
+        </figure>
+      </div>
+    </div>
+    </div>
+    <p class="fineprint" data-i18n="fineprint"></p>
+  </section>
+
+  <section class="rules wrap" id="rules" aria-labelledby="rules-title">
+    <h2 id="rules-title" data-i18n="rulesTitle"></h2>
+    <div class="rules-grid">
+      <figure class="rules-figure" aria-hidden="true"><svg id="rings" viewBox="0 0 360 360"></svg></figure>
+      <ol class="rules-list">
+        <li><strong data-i18n="rule1t"></strong><span data-i18n="rule1"></span></li>
+        <li><strong data-i18n="rule2t"></strong><span data-i18n="rule2"></span></li>
+        <li><strong data-i18n="rule3t"></strong><span data-i18n="rule3"></span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="closing wrap" id="get">
+    <img src="assets/app-icon.png" width="88" height="88" alt="WifiCrush">
+    <div>
+      <h2 data-i18n-html="closingTitle"></h2>
+      <p data-i18n="closingText"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap"><span>© 2026 PitroyTech</span><span data-i18n="footer"></span></footer>
+</body>
+</html>
