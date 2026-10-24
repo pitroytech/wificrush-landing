@@ -7,7 +7,7 @@ const STRINGS = {
     docTitle: 'WifiCrush · Stay close to your crush',
     docDesc: 'WifiCrush for jailbroken iPhone: stays on the Wi-Fi you love, moves to a stronger one when it fades, and to 4G/5G when every Wi-Fi is weak.',
     brandHome: 'WifiCrush, back to top', navLabel: 'Main', navStories: 'Stories', navRules: 'How it works', navGet: 'Get WifiCrush', langLabel: 'Language',
-    heroTitle: 'Stay close to your crush.<br>Too far? <em>Let go.</em>',
+    heroTitle: 'Stay close to your Wi-Fi crush.<br>Too far? <em>Let go.</em>',
     heroLead: 'WifiCrush keeps your iPhone on the Wi-Fi you love while it is strong. When it fades, the phone moves to a stronger network or to 4G/5G, then comes back by itself.',
     heroCta: 'See 4 everyday moments',
     storiesTitle: 'Same iPhone. A different way of picking networks.',
