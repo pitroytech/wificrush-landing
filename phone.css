@@ -2,7 +2,7 @@
    Inside .screen 1em = 10 pt of the 393 x 852 pt display (screen width = 91.6% of --w),
    so every size below is iOS 17 points divided by ten. The phone UI is always dark mode. */
 .device { --w: 226px; position: relative; width: var(--w); flex: none; filter: drop-shadow(0 22px 26px rgb(10 20 15 / .28)); }
-.hero-device { --w: 300px; }
+.hero-device { --w: 300px; position: relative; z-index: 1; filter: drop-shadow(-24px 28px 28px rgb(3 7 18 / .52)); }
 .bezel { padding: calc(var(--w) * .03); border: calc(var(--w) * .012) solid transparent; border-radius: calc(var(--w) * .17);
   background: linear-gradient(#050505, #050505) padding-box,
     linear-gradient(140deg, #babdc2 0%, #5b5e63 18%, #dcdee1 38%, #73767b 56%, #c4c6ca 78%, #55585d 100%) border-box; }

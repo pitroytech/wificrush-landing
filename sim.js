@@ -82,7 +82,8 @@ function createSim(story, mode) {
   return {
     story, mode, t: 0, realT: 0, wp: 0, leg: 0, pauseLeft: first.pause || 0, standReal: 0, moving: false,
     x: first.x, rssi: { ...first.rssi }, need: first.need,
-    connected: story.start, cell: false, gate: false, strongest: false, wifiOff: false,
+    connected: story.start, cell: false, gate: false, strongest: false, wifiOff: false, verifyFor: 0, verifying: false, verifyAp: null,
+    probeFor: 0, probeDone: false, checkFailed: false, internetAvailable: true,
     weakFor: 0, lteFor: 0, crushFor: 0, callWeak: 0, cooldown: 0,
     inCall: story.activity === 'call', reconnect: 0, badCall: 0, dropped: false,
     quality: 'good', play: 37, noteClock: 0, log: [], notices: [], overlay: null, actionFired: false, done: false,
@@ -101,18 +102,25 @@ function notify(sim) {
 
 function join(sim, id, why) {
   if (!id || sim.connected === id) return;
+  const returningFromCell = sim.mode === 'tweak' && sim.cell;
   sim.connected = id;
-  sim.cell = false;
+  // Illustrative return check: retain cellular until Wi-Fi has stayed stable for 30 sim seconds.
+  sim.verifying = returningFromCell;
+  sim.verifyFor = 0;
+  sim.verifyAp = returningFromCell ? id : null;
+  sim.probeFor = 0; sim.probeDone = false; sim.checkFailed = false;
+  if (!returningFromCell) sim.cell = false;
   sim.gate = false;
   sim.weakFor = sim.lteFor = sim.crushFor = 0;
   sim.cooldown = 10;
-  say(sim, `join.${why}`);
-  if (sim.mode === 'tweak' && ['best', 'crush', 'recover'].includes(why)) notify(sim);
+  say(sim, returningFromCell ? 'join.verifying' : `join.${why}`);
+  if (sim.mode === 'tweak' && (returningFromCell || ['best', 'crush', 'recover'].includes(why))) notify(sim);
 }
 
 function goCellular(sim, why) {
   sim.connected = null;
   sim.cell = true;
+  sim.verifying = false; sim.verifyFor = 0; sim.verifyAp = null; sim.probeFor = 0; sim.probeDone = false;
   sim.gate = sim.mode === 'tweak';
   sim.weakFor = sim.lteFor = sim.callWeak = 0;
   if (sim.inCall && !sim.dropped) sim.reconnect = 2;
@@ -136,6 +144,32 @@ function tweakPolicy(sim, dt) {
   const story = sim.story, ids = story.aps.map(a => a.id);
   const cur = sim.connected ? sim.rssi[sim.connected] : null;
   sim.cooldown = Math.max(0, sim.cooldown - dt);
+  if (sim.verifyAp) {
+    if (!sim.connected || sim.connected !== sim.verifyAp || sim.wifiOff) {
+      sim.verifying = false; sim.verifyFor = 0; sim.verifyAp = null;
+    } else if (sim.rssi[sim.connected] < LTE + 3) {
+      sim.verifying = false; sim.verifyFor = 0;
+    } else {
+      sim.verifying = true;
+      if (sim.verifyFor < 30) {
+        sim.verifyFor += dt;
+        if (sim.verifyFor >= 30 - 1e-9) { sim.verifyFor = 30; say(sim, 'join.probing'); }
+      } else if (!sim.probeDone) {
+        sim.probeFor += dt;
+        if (sim.probeFor >= 1 - 1e-9) {
+          sim.probeDone = true;
+          sim.checkFailed = !sim.internetAvailable;
+          if (sim.checkFailed) say(sim, 'join.checkFailed');
+        }
+      } else if (sim.checkFailed && sim.internetAvailable) {
+        // Mock input recovery retries the illustrative probe; no network request is made.
+        sim.checkFailed = false; sim.probeDone = false; sim.probeFor = 0;
+      }
+      if (sim.probeDone && !sim.checkFailed && !sim.inCall) {
+        sim.verifying = false; sim.cell = false; sim.verifyAp = null; say(sim, 'join.verified');
+      }
+    }
+  }
   // Story 3 (beta2): on a call, Wi-Fi under the data level goes to 4G/5G at once.
   if (story.activity === 'call' && sim.inCall && !sim.dropped && sim.connected) {
     sim.callWeak = cur < CALL_LEVEL ? sim.callWeak + dt : 0;
@@ -195,11 +229,13 @@ function applyAction(sim, action) {
   if (verb === 'pick') join(sim, arg, 'manual');
   else if (verb === 'wifi' && arg === 'off') {
     sim.wifiOff = true;
+    sim.verifying = false; sim.verifyFor = 0; sim.verifyAp = null; sim.probeFor = 0; sim.probeDone = false;
     sim.connected = null;
     sim.cell = true;
     say(sim, 'cell.manual');
   } else if (verb === 'wifi') {
     sim.wifiOff = false;
+    sim.verifying = false; sim.verifyFor = 0; sim.verifyAp = null; sim.probeFor = 0; sim.probeDone = false;
     sim.cell = false;
     iosPolicy(sim);
   } else if (arg === 'on') {

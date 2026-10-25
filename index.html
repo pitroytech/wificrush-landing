@@ -38,11 +38,30 @@
 <main id="top">
   <section class="hero wrap">
     <div class="hero-copy">
+      <p class="eyebrow" data-i18n="heroTag"></p>
       <h1 data-i18n-html="heroTitle"></h1>
       <p class="lead" data-i18n="heroLead"></p>
-      <a class="button primary" href="#stories"><span data-i18n="heroCta"></span> <i class="ph ph-arrow-down"></i></a>
+      <div class="hero-actions">
+        <a class="button primary" href="#stories"><span data-i18n="heroCta"></span> <i class="ph ph-arrow-down"></i></a>
+        <a class="button secondary" href="https://havoc.app/package/wificrush" target="_blank" rel="noopener"><span data-i18n="buyCta"></span> <i class="ph ph-arrow-up-right"></i></a>
+      </div>
+      <p class="offer" data-i18n="offer"></p>
+      <p class="compatibility" data-i18n="compatibilityLine"></p>
     </div>
     <div class="hero-visual" aria-hidden="true"><div class="device hero-device" id="hero-phone"></div></div>
+  </section>
+
+  <section class="video-section wrap" aria-labelledby="video-title">
+    <a class="video-thumb" href="https://www.youtube.com/watch?v=Tju8PySPVTw" target="_blank" rel="noopener" aria-label="Watch WifiCrush demo on YouTube">
+      <span class="video-thumb-grid"></span><span class="video-play"><i class="ph-fill ph-play"></i></span>
+    </a>
+    <div class="video-copy">
+      <p class="section-kicker" data-i18n="videoKicker"></p>
+      <h2 id="video-title" data-i18n="videoTitle"></h2>
+      <a class="video-link" href="https://www.youtube.com/watch?v=Tju8PySPVTw" target="_blank" rel="noopener">
+        <span class="video-play"><i class="ph-fill ph-play"></i></span><span data-i18n="videoCta"></span><i class="ph ph-arrow-up-right"></i>
+      </a>
+    </div>
   </section>
 
   <section class="stories wrap" id="stories" aria-labelledby="stories-title">
@@ -104,6 +123,13 @@
       <p data-i18n="closingText"></p>
       <a class="closing-cta" href="https://havoc.app/package/wificrush" target="_blank" rel="noopener" data-i18n="closingCta"></a>
     </div>
+  </section>
+
+  <section class="faq wrap" id="faq" aria-labelledby="faq-title">
+    <h2 id="faq-title" data-i18n="faqTitle"></h2>
+    <details><summary data-i18n="faqCompatibilityTitle"></summary><p data-i18n="faqCompatibilityText"></p></details>
+    <details><summary data-i18n="faqActivationTitle"></summary><p data-i18n="faqActivationText"></p></details>
+    <details><summary data-i18n="faqSupportTitle"></summary><p data-i18n-html="faqSupportText"></p></details>
   </section>
 </main>
 

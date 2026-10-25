@@ -138,6 +138,8 @@ function statusLines(sim) {
   const ap = sim.connected ? apById(sim.story, sim.connected) : null;
   const vars = { net: ap ? apName(ap) : '', level: ap ? Math.round(sim.rssi[ap.id]) : 0, lte: LTE + 3 };
   const pick = key => [t(`wc.${key}T`, vars), t(`wc.${key}S`, vars)];
+  if (sim.checkFailed) return pick('checkFailed');
+  if (sim.verifying) return pick(sim.probeFor > 0 || sim.verifyFor >= 30 ? 'probing' : 'verify');
   if (sim.gate) return pick('gate');
   if (!ap) return pick(sim.cell ? 'cell' : 'none');
   if (sim.strongest) return pick('strong');
