@@ -27,6 +27,7 @@
   <nav data-i18n-aria="navLabel">
     <a href="#stories" data-i18n="navStories"></a>
     <a href="#rules" data-i18n="navRules"></a>
+    <a class="repo-link" href="https://pitroytech.github.io/repo/" target="_blank" rel="noopener" data-i18n="navRepo"></a>
     <div class="lang" role="group" data-i18n-aria="langLabel">
       <button type="button" data-lang="en" aria-pressed="true">EN</button>
       <button type="button" data-lang="vi" aria-pressed="false">VI</button>
@@ -52,9 +53,9 @@
   </section>
 
   <section class="video-section wrap" aria-labelledby="video-title">
-    <a class="video-thumb" href="https://www.youtube.com/watch?v=Tju8PySPVTw" target="_blank" rel="noopener" aria-label="Watch WifiCrush demo on YouTube">
-      <span class="video-thumb-grid"></span><span class="video-play"><i class="ph-fill ph-play"></i></span>
-    </a>
+    <div class="video-frame">
+      <iframe src="https://www.youtube-nocookie.com/embed/Tju8PySPVTw" title="WifiCrush demo" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
     <div class="video-copy">
       <p class="section-kicker" data-i18n="videoKicker"></p>
       <h2 id="video-title" data-i18n="videoTitle"></h2>
@@ -68,6 +69,8 @@
     <h2 id="stories-title" data-i18n="storiesTitle"></h2>
     <div class="story-tabs" role="tablist" id="story-tabs"></div>
 
+    <dialog class="story-player" id="story-player" aria-labelledby="stage-title">
+      <div class="story-player-bar"><span class="story-player-heading" data-i18n="storyPlayerTitle"></span><button class="icon-button" id="close-story-player" type="button" data-i18n-aria="closePlayer"><i class="ph ph-x"></i></button></div>
     <div class="stage-frame">
     <div class="stage">
       <div class="stage-scene">
@@ -102,6 +105,7 @@
     </div>
     </div>
     <p class="fineprint" data-i18n="fineprint"></p>
+    </dialog>
   </section>
 
   <section class="rules wrap" id="rules" aria-labelledby="rules-title">
@@ -133,6 +137,6 @@
   </section>
 </main>
 
-<footer class="wrap"><span>© 2026 PitroyTech</span><span data-i18n="footer"></span></footer>
+<footer class="wrap"><span>© 2026 PitroyTech</span><span data-i18n="footer"></span><a class="repo-link" href="https://pitroytech.github.io/repo/" target="_blank" rel="noopener" data-i18n="navRepo"></a></footer>
 </body>
 </html>

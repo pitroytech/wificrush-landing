@@ -14,8 +14,11 @@ const playButton = document.getElementById('play');
 const explainBox = document.getElementById('explain');
 const tabs = document.getElementById('story-tabs');
 const heroHost = document.getElementById('hero-phone');
+const storyPlayer = document.getElementById('story-player');
+const closeStoryPlayer = document.getElementById('close-story-player');
 let phones = {};
 const hero = { phone: null, sim: null };
+let playerReturnFocus = null, playerScrollY = 0, priorBodyOverflow = '';
 
 // Illustrative download speed (owner, 2026-10-23): it belongs to the network and its level, so
 // two phones on the same network at the same spot show the same narrow range, and the gap
@@ -236,6 +239,7 @@ function drawRings() {
 tabs.addEventListener('click', e => {
   const b = e.target.closest('.story-tab');
   if (!b) return;
+  openStoryPlayer(b);
   loadStory(STORIES.find(s => s.id === b.dataset.story));
   setPlaying(true);
 });
@@ -244,6 +248,31 @@ playButton.addEventListener('click', () => {
   setPlaying(!state.playing);
 });
 document.getElementById('replay').addEventListener('click', () => { loadStory(state.story); setPlaying(true); });
+function openStoryPlayer(trigger) {
+  if (!storyPlayer.open) {
+    playerReturnFocus = trigger || document.activeElement;
+    playerScrollY = scrollY;
+    priorBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    storyPlayer.showModal();
+    document.documentElement.classList.add('player-open');
+    fitPhone();
+    closeStoryPlayer.focus();
+  }
+}
+function closeStory() {
+  if (!storyPlayer.open) return;
+  setPlaying(false);
+  storyPlayer.close();
+  document.documentElement.classList.remove('player-open');
+  document.body.style.overflow = priorBodyOverflow;
+  fitPhone();
+  scrollTo(0, playerScrollY);
+  if (playerReturnFocus?.isConnected) playerReturnFocus.focus({ preventScroll: true });
+}
+closeStoryPlayer.addEventListener('click', closeStory);
+storyPlayer.addEventListener('cancel', e => { e.preventDefault(); closeStory(); });
+storyPlayer.addEventListener('click', e => { if (e.target === storyPlayer) closeStory(); });
 document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
 
 LANG = initialLang();
@@ -262,16 +291,11 @@ const phoneSideways = matchMedia('(orientation: landscape) and (max-height: 520p
 function fitPhone() {
   const root = document.documentElement;
   root.classList.toggle('phone-wide', phoneUpright.matches || phoneSideways.matches);
-  root.classList.toggle('phone-rot', phoneUpright.matches);
+  root.classList.toggle('phone-rot', storyPlayer.open && phoneUpright.matches);
 }
 fitPhone();
 addEventListener('resize', fitPhone);          // some browsers skip the media change event
-for (const query of [phoneUpright, phoneSideways]) query.addEventListener('change', e => {
-  fitPhone();
-  if (!e.matches) return;
-  const frame = document.querySelector('.stage-frame'), box = frame.getBoundingClientRect();
-  if (box.bottom > 0 && box.top < innerHeight * 2) frame.scrollIntoView({ block: 'start' });   // near the stories: bring it on
-});
+for (const query of [phoneUpright, phoneSideways]) query.addEventListener('change', fitPhone);
 function stepStory(by) {
   const i = (STORIES.indexOf(state.story) + by + STORIES.length) % STORIES.length;
   loadStory(STORIES[i]);
@@ -279,12 +303,3 @@ function stepStory(by) {
 }
 document.getElementById('prev-story').addEventListener('click', () => stepStory(-1));
 document.getElementById('next-story').addEventListener('click', () => stepStory(1));
-
-// Autoplay only when the stage is on screen.
-let seen = false;
-new IntersectionObserver(entries => {
-  for (const entry of entries) {
-    if (entry.isIntersecting && !seen && !reduceMotion) { seen = true; loadStory(state.story); setPlaying(true); }
-    else if (!entry.isIntersecting && state.playing) setPlaying(false);
-  }
-}, { threshold: .25 }).observe(document.querySelector('.stage-frame'));

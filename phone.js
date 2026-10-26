@@ -238,13 +238,49 @@ function placeFinger(phone, f) {
   finger.style.transitionDuration = f.dur ? `${f.dur}s` : '';
   if (f.pt) { finger.style.left = `${f.pt[0]}%`; finger.style.top = `${f.pt[1]}%`; }
   else if (target) {
-    const a = target.getBoundingClientRect(), b = phone.screen.getBoundingClientRect();
-    finger.style.left = `${(a.left + a.width * (f.ax ?? .5) - b.left) / b.width * 100}%`;
-    finger.style.top = `${(a.top + a.height / 2 - b.top) / b.height * 100}%`;
+    const point = elementPoint(target, f.ax ?? .5, .5);
+    const local = pointInElement(phone.screen, point);
+    finger.style.left = `${local.x * 100}%`;
+    finger.style.top = `${local.y * 100}%`;
   }
   finger.classList.add('on');
   finger.classList.toggle('press', Boolean(f.press));
   if (!wasOn) requestAnimationFrame(() => { finger.style.transitionProperty = ''; });
+}
+
+// Convert the target's on-screen point through the screen's quad. Unlike bounding rectangles,
+// quads preserve the axes when the stage is rotated 90 degrees on a portrait phone.
+function elementPoint(element, x, y) {
+  if (document.documentElement.classList.contains('phone-rot')) {
+    const r = element.getBoundingClientRect();
+    return { x: r.right - r.width * y, y: r.top + r.height * x };
+  }
+  if (element.getBoxQuads) {
+    const q = element.getBoxQuads()[0];
+    if (q) return { x: q.p1.x + (q.p2.x - q.p1.x) * x + (q.p4.x - q.p1.x) * y,
+      y: q.p1.y + (q.p2.y - q.p1.y) * x + (q.p4.y - q.p1.y) * y };
+  }
+  const r = element.getBoundingClientRect();
+  return { x: r.left + r.width * x, y: r.top + r.height * y };
+}
+
+function pointInElement(element, point) {
+  if (document.documentElement.classList.contains('phone-rot')) {
+    const r = element.getBoundingClientRect();
+    return { x: (point.y - r.top) / r.height, y: 1 - (point.x - r.left) / r.width };
+  }
+  if (element.getBoxQuads) {
+    const q = element.getBoxQuads()[0];
+    if (q) {
+      const ux = q.p2.x - q.p1.x, uy = q.p2.y - q.p1.y;
+      const vx = q.p4.x - q.p1.x, vy = q.p4.y - q.p1.y;
+      const px = point.x - q.p1.x, py = point.y - q.p1.y;
+      const det = ux * vy - uy * vx;
+      if (Math.abs(det) > 1e-8) return { x: (px * vy - py * vx) / det, y: (ux * py - uy * px) / det };
+    }
+  }
+  const r = element.getBoundingClientRect();
+  return { x: (point.x - r.left) / r.width, y: (point.y - r.top) / r.height };
 }
 
 function renderLock(phone, sim) {
