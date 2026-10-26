@@ -249,6 +249,7 @@ playButton.addEventListener('click', () => {
 });
 document.getElementById('replay').addEventListener('click', () => { loadStory(state.story); setPlaying(true); });
 function openStoryPlayer(trigger) {
+  if (!phoneUpright.matches && !phoneSideways.matches) return;
   if (!storyPlayer.open) {
     playerReturnFocus = trigger || document.activeElement;
     playerScrollY = scrollY;
@@ -290,7 +291,17 @@ const phoneUpright = matchMedia('(orientation: portrait) and (max-width: 600px)'
 const phoneSideways = matchMedia('(orientation: landscape) and (max-height: 520px)');
 function fitPhone() {
   const root = document.documentElement;
-  root.classList.toggle('phone-wide', phoneUpright.matches || phoneSideways.matches);
+  const mobile = phoneUpright.matches || phoneSideways.matches;
+  const stageFrame = document.querySelector('.stage-frame');
+  const inlinePlayer = document.getElementById('inline-story-player');
+  if (!mobile && storyPlayer.open) closeStory();
+  const destination = mobile ? storyPlayer : inlinePlayer;
+  if (stageFrame.parentElement !== destination) {
+    if (mobile) { storyPlayer.insertBefore(stageFrame, storyPlayer.querySelector('.fineprint')); setPlaying(false); }
+    else inlinePlayer.prepend(stageFrame);
+  }
+  inlinePlayer.hidden = mobile;
+  root.classList.toggle('phone-wide', mobile);
   root.classList.toggle('phone-rot', storyPlayer.open && phoneUpright.matches);
 }
 fitPhone();
