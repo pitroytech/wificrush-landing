@@ -165,7 +165,7 @@ function drawDiorama(g, S, t, wc, ios) {
   // Fixed camera keeps position comparisons readable.
   let cx = (A.x0 + A.x1) / 2 - s * (bx0 + bx1) / 2, cy = (A.y0 + A.y1) / 2 - s * (by0 + by1) / 2;
   const wp = makeCam(cx, cy, s, yaw).P(w.x, WALK_Y, 0);
-  
+
   const cam = makeCam(cx, cy, s, yaw);
   const P = cam.P;
 
