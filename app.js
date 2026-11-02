@@ -130,7 +130,7 @@ function loadStory(story) {
   state.sims = { ios: createSim(story, 'ios'), tweak: createSim(story, 'tweak') };
   const first = story.route[0].say;
   for (const mode of MODES) if (first && first[mode]) say(state.sims[mode], `say.${first[mode]}`);
-  state.refs = buildMap(mapSvg, sceneFx, story);
+  state.refs = WCDiorama.build(mapSvg, sceneFx, story);
   state.shown = {};
   for (const mode of MODES) document.getElementById(`notes-${mode}`).textContent = '';
   tabs.querySelectorAll('.story-tab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.story === story.id)));
@@ -147,7 +147,7 @@ function renderStageTitle() {
 
 function render(force = false) {
   const { sims, story } = state;
-  updateMap(state.refs, sims.tweak, story);
+  WCDiorama.update(state.refs, sims.tweak, story, force);
   for (const mode of MODES) {
     const sim = sims[mode];
     renderPhone(phones[mode], sim);
@@ -215,7 +215,7 @@ function setLang(lang) {
   renderTabs();
   setPlaying(state.playing, state.finished);
   buildPhones();
-  state.refs = buildMap(mapSvg, sceneFx, state.story);
+  state.refs = WCDiorama.build(mapSvg, sceneFx, state.story);
   state.shown = {};
   renderExplain();
   renderStageTitle();
@@ -303,9 +303,11 @@ function fitPhone() {
   inlinePlayer.hidden = mobile;
   root.classList.toggle('phone-wide', mobile);
   root.classList.toggle('phone-rot', storyPlayer.open && phoneUpright.matches);
+  requestAnimationFrame(() => render(true));
 }
 fitPhone();
 addEventListener('resize', fitPhone);          // some browsers skip the media change event
+addEventListener('pageshow', () => requestAnimationFrame(() => render(true)));
 for (const query of [phoneUpright, phoneSideways]) query.addEventListener('change', fitPhone);
 function stepStory(by) {
   const i = (STORIES.indexOf(state.story) + by + STORIES.length) % STORIES.length;
